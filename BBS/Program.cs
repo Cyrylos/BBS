@@ -21,7 +21,7 @@ namespace BBS
             this.N = P * Q;
             Random rnd = new Random();
             int random = rnd.Next();
-            while ((random % p == 0) || (random % q == 0))
+            while ((random % P == 0) || (random % Q == 0))
             {
                 random = rnd.Next();
             }
@@ -30,16 +30,22 @@ namespace BBS
         public BBS(int seed)
         {
             this.N = P * Q;
-            if ((seed % p == 0) || (seed % q == 0))
+            if ((seed % P == 0) || (seed % Q == 0))
             {
                 throw new System.InvalidOperationException($"Seed can't be multiple of {P} or {Q}");
             }
             this.Seed = seed;
         }
 
+        private void WriteOutputSeparator()
+        {
+            Console.WriteLine("\n-------------------\n");
+        }
+
         public void GenerateBits()
         {
-            Console.WriteLine("Seed: {0}", this.Seed);
+            Console.WriteLine("Seed:\t{0}", this.Seed);
+            WriteOutputSeparator();
             long x = Seed;
             for (int i = 0; i < 20000; i++)
             {
@@ -65,7 +71,8 @@ namespace BBS
         public bool SingleBitTest()
         {
             int bitSum = this.CountTrue();
-            Console.WriteLine("Count 1: {0}", bitSum);
+            Console.WriteLine("Count 1:\t{0}", bitSum);
+            WriteOutputSeparator();
             if ((bitSum > 9725) && (bitSum < 10275))
             {
                 return true;
@@ -101,18 +108,21 @@ namespace BBS
                 }
             }
 
+            Boolean resultFlag = true;
+
             for (int i = 0; i < batchCount.Length; i++)
             {
                 count = batchCount[i];
                 int lowerLimit = batchSection[i, 0];
                 int upperLimit = batchSection[i, 1];
-                Console.WriteLine("Series of {0}: {1}", i, count);
+                Console.WriteLine("Series of {0}:\t{1}", i, count);
                 if ((count < lowerLimit) || (count > upperLimit))
                 {
                     return false;
                 }
             }
-            return true;
+            WriteOutputSeparator();
+            return resultFlag;
         }
 
         public bool LongBatchTest()
@@ -134,7 +144,8 @@ namespace BBS
                     count = 0;
                 }
             }
-            Console.WriteLine("Max series: {0}", max);
+            Console.WriteLine("Max series:\t{0}", max);
+            WriteOutputSeparator();
             if (max > 25)
             {
                 return false;
@@ -159,11 +170,11 @@ namespace BBS
             for (int i = 0; i < sequentionCount.Length; i++)
             {
                 sum += sequentionCount[i] * sequentionCount[i];
-                //Console.WriteLine("Seq {0}: {1}", i, sequentionCount[i] * sequentionCount[i]);
             }
             double x = (16d / 5000d) * sum - 5000d;
-            Console.WriteLine("Poker sum: {0}", sum);
-            Console.WriteLine("Poker value: {0}", x);
+            Console.WriteLine("Poker sum:\t{0}", sum);
+            Console.WriteLine("Poker value:\t{0}", x);
+            WriteOutputSeparator();
             if ((x > 2.16) && (x < 46.17))
             {
                 return true;
@@ -175,18 +186,16 @@ namespace BBS
     {
         static void Main(string[] args)
         {
-            //Console.WriteLine("\n--------------------------\n");
-            //Console.WriteLine("Testing for: {0}", i);
             BBS test = new BBS();
             test.GenerateBits();
-            bool SingleBitFlag = test.SingleBitTest();
-            bool BatchFlag = test.BatchTest();
-            bool LongBatchFlag = test.LongBatchTest();
+            bool singleBitFlag = test.SingleBitTest();
+            bool batchFlag = test.BatchTest();
+            bool longBatchFlag = test.LongBatchTest();
             bool pokerFlag = test.PokerTest();
             Console.WriteLine("Single Bit Test:\t{0}\n" +
                 "Batch Test:\t\t{1}\n" +
                 "Long Batch Test:\t{2}\n" +
-                "Poker Test:\t\t{3}", SingleBitFlag, BatchFlag, LongBatchFlag, pokerFlag);
+                "Poker Test:\t\t{3}", singleBitFlag, batchFlag, longBatchFlag, pokerFlag);
 
         }
     }
